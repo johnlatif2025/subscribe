@@ -212,6 +212,7 @@ app.post('/api/subscription-order', upload.single('transferScreenshot'), async (
       planKey, // ✅ لازم تيجي من الفرونت
       accountName,
       email,
+      password,
       phone,
       transferNumber
     } = req.body;
@@ -256,6 +257,7 @@ app.post('/api/subscription-order', upload.single('transferScreenshot'), async (
         // user
         accountName,
         email,
+        password,
         phone,
         transferNumber,
         transferScreenshot: screenshotPath,
@@ -282,6 +284,7 @@ app.post('/api/subscription-order', upload.single('transferScreenshot'), async (
 💰 سعر الباقة: ${plan.price} جنيه
 👤 اسم الحساب: ${accountName}
 📧 البريد: ${email}
+🔑كلمة السر:${password}
 📞 الهاتف: ${phone}
 🔢 رقم التحويل: ${transferNumber}
 🖼️ السكرين: ${secureScreenshotUrl}
