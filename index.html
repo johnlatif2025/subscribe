@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- SEO -->
+  <meta name="description" content="موقع اشتراكاتي يوفر اشتراكات أصلية وموثوقة لأشهر المنصات مثل Netflix، Shahid، Watch It بأسعار تنافسية وخدمة عملاء.">
+  <meta name="keywords" content="اشتراكات نتفليكس, اشتراك شاهد, اشتراك واتش ات, اشتراكاتي">
+  <meta name="author" content="موقع اشتراكاتي">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="ar">
+  <meta name="theme-color" content="#764ba2">
+
+  <!-- OG -->
+  <meta property="og:title" content="اشتراكاتي - اشتراكات أصلية بأفضل الأسعار">
+  <meta property="og:description" content="اشترك في نيتفليكس، شاهد، واتش ات بأسعار تنافسية وخدمة متميزة.">
+  <meta property="og:image" content="https://i.postimg.cc/Qd7HVSwN/logo.png">
+  <meta property="og:url" content="https://subscribe-production.up.railway.app">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ar_AR">
+  <link rel="icon" type="image/png" href="https://i.postimg.cc/1t09Zj80/logo.png">
+
+  <title>اشتراكاتي | اشتراكات نيتفليكس وشاهد وواتش ات بأفضل الأسعار</title>
+
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:#333; line-height:1.6; overflow-x:hidden; }
+    .container { max-width:1200px; margin:0 auto; padding:0 20px; }
+
+    /* واتساب */
+    .floating-elements { position: fixed; bottom: 20px; left: 20px; z-index: 100; }
+    .floating-btn {
+      width: 60px; height: 60px; border-radius: 50%;
+      background: #25D366; color: white;
+      display:flex; align-items:center; justify-content:center;
+      box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+      transition: all 0.3s ease; animation: pulse 2s infinite;
+    }
+    .floating-btn:hover { transform: scale(1.1); box-shadow: 0 6px 25px rgba(37, 211, 102, 0.6); }
+    .floating-btn i { font-size: 1.8rem; }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+      70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+    }
+
+    /* مودال */
+    .modal {
+      display:none; position:fixed; top:0; left:0;
+      width:100%; height:100%;
+      background: rgba(0,0,0,0.5);
+      justify-content:center; align-items:center;
+      z-index:1000; opacity:0;
+      transition: opacity .25s ease;
+      padding: 16px;
+    }
+    .modal.active { display:flex; opacity:1; }
+    .modal-content {
+      background:white; border-radius:15px;
+      width: 100%; max-width: 560px;
+      padding: 1.6rem;
+      position: relative;
+      transform: scale(0.95);
+      transition: transform .25s ease;
+      box-shadow: 0 20px 60px rgba(0,0,0,.2);
+      max-height: 85vh;
+      overflow:auto;
+    }
+    .modal.active .modal-content { transform: scale(1); }
+    .close {
+      position:absolute; top:1rem; left:1rem;
+      font-size:1.5rem; cursor:pointer;
+      color:#999; transition: .2s;
+      width:30px; height:30px;
+      display:flex; align-items:center; justify-content:center;
+      border-radius:50%;
+    }
+    .close:hover { color:#333; background: rgba(0,0,0,.06); }
+
+    .btn {
+      display:inline-block; background:#764ba2; color:white;
+      padding:.8rem 1.5rem; border-radius: 30px;
+      text-decoration:none; font-weight:600;
+      transition: all .25s; border:none; cursor:pointer;
+      box-shadow: 0 4px 15px rgba(118, 75, 162, 0.3);
+    }
+    .btn:hover { background:#5a3780; transform: translateY(-2px); box-shadow: 0 6px 18px rgba(118, 75, 162, 0.4); }
+    .btn:active { transform: translateY(-1px); }
+
+    .form-group { margin-bottom:1.1rem; }
+    .form-group label { display:block; margin-bottom:.45rem; font-weight:700; color:#555; }
+    .form-group input {
+      width:100%; padding:.8rem 1rem; border:1px solid #ddd;
+      border-radius: 8px; font-size: 1rem; transition:.2s;
+    }
+    .form-group input:focus { border-color:#764ba2; outline:none; box-shadow: 0 0 0 3px rgba(118,75,162,.1); }
+
+    .file-input-container { position:relative; margin-top:.5rem; }
+    .file-input {
+      width:100%; padding:.8rem 1rem;
+      border:2px dashed #ddd; border-radius:8px;
+      background:#f9f9f9; cursor:pointer;
+      transition:.2s; text-align:center;
+    }
+    .file-input:hover { border-color:#764ba2; background:#f0f0f0; }
+    .file-input.has-file { border-color:#28a745; background:#f8fff9; }
+    .file-name { margin-top:.5rem; font-size:.9rem; color:#666; text-align:center; }
+
+    .message {
+      margin-top: 1rem; padding: .8rem;
+      border-radius: 8px; text-align:center;
+      display:none;
+    }
+    .success { background:#d4edda; color:#155724; border: 1px solid #c3e6cb; }
+    .error { background:#f8d7da; color:#721c24; border: 1px solid #f5c6cb; }
+
+    .fade-in { opacity:0; transform: translateY(20px); transition: all .5s ease; }
+    .fade-in.visible { opacity:1; transform: translateY(0); }
+
+    .sub-logo { width: 90px; height: 90px; object-fit:contain; margin-bottom: 1rem; transition: transform .25s ease; }
+    .subscription-card:hover .sub-logo { transform: scale(1.08); }
+
+    @media (max-width:768px){
+      .nav-links { display:none !important; }
+    }
+  </style>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+  <!-- زر الواتساب -->
+  <div class="floating-elements">
+    <a href="https://wa.me/201274445091" target="_blank" class="floating-btn" rel="noopener">
+      <i class="fab fa-whatsapp"></i>
+    </a>
+  </div>
+
+  <!-- Header -->
+  <header id="mainHeader">
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@500;700&display=swap");
+      #mainHeader{
+        background: linear-gradient(135deg, #0f172a, #1e293b);
+        color:#f9fafb; padding:15px 0; position:sticky; top:0; z-index:1000;
+        box-shadow:0 2px 10px rgba(0,0,0,.4); transition:.3s; font-family:"Cairo", sans-serif;
+      }
+      #mainHeader.scrolled { background: linear-gradient(135deg, #0a0f1a, #111827); }
+      #mainHeader .container { max-width:1200px; margin:auto; padding:0 25px; }
+      .nav-container { display:flex; align-items:center; justify-content:space-between; }
+      .logo { display:flex; align-items:center; font-size:1.6rem; font-weight:800; color:#facc15; }
+      .logo-icon { color:#f87171; margin-right:8px; font-size:1.5rem; }
+      .nav-links { list-style:none; display:flex; gap:25px; }
+      .nav-links li a { text-decoration:none; color:#f9fafb; font-weight:600; transition:.3s; font-size:1rem; }
+      .nav-links li a:hover { color:#facc15; }
+      .btn.header-btn {
+        background:#facc15; color:#111827; padding:10px 22px; border-radius:10px;
+        font-weight:900; text-decoration:none; transition:.3s; box-shadow:none;
+      }
+      .btn.header-btn:hover { background:#fbbf24; transform:scale(1.05); }
+    </style>
+
+    <div class="container">
+      <div class="nav-container">
+        <div class="logo">
+          <i class="fas fa-play-circle logo-icon"></i>
+          <span>اشتراكاتي</span>
+        </div>
+
+        <ul class="nav-links">
+          <li><a href="#home">الرئيسية</a></li>
+          <li><a href="#subscriptions">الاشتراكات</a></li>
+          <li><a href="#about">من نحن</a></li>
+          <li><a href="#contact">اتصل بنا</a></li>
+        </ul>
+
+        <a href="#subscriptions" class="btn header-btn">اطلب الآن</a>
+      </div>
+    </div>
+
+    <script>
+      window.addEventListener("scroll", function () {
+        const header = document.getElementById("mainHeader");
+        header.classList.toggle("scrolled", window.scrollY > 10);
+      });
+    </script>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero" id="home">
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@500;700&display=swap");
+      #home {
+        background: linear-gradient(135deg, #1e293b, #0f172a);
+        color:#f9fafb; padding:120px 20px; text-align:center;
+        font-family:"Cairo", sans-serif; position:relative; overflow:hidden;
+      }
+      #home::before{
+        content:""; position:absolute; top:-100px; left:-100px; width:400px; height:400px;
+        background: radial-gradient(circle, rgba(250, 204, 21, 0.12) 0%, transparent 70%);
+        filter: blur(60px); animation: pulseHome 6s ease-in-out infinite alternate;
+      }
+      @keyframes pulseHome { from{ transform:scale(1);} to{ transform:scale(1.2);} }
+      #home .container { max-width:900px; margin:auto; z-index:2; position:relative; }
+      #home h1 { font-size:2.5rem; font-weight:900; color:#facc15; margin-bottom:20px; line-height:1.4; }
+      #home p { font-size:1.2rem; line-height:2; color:#e2e8f0; margin-bottom:40px; }
+      #home .btn { background:#facc15; color:#111827; padding:14px 28px; border-radius:12px; font-weight:900; }
+      #home .btn:hover { background:#fde047; transform:scale(1.07); }
+    </style>
+
+    <div class="container">
+      <h1>اشترك في أفضل المنصات بأفضل الأسعار</h1>
+      <p>اختار المنصة والباقة والمدة (شهري/سنوي) واستلم تفعيل سريع.</p>
+      <a href="#subscriptions" class="btn">عرض الاشتراكات</a>
+    </div>
+  </section>
+
+  <!-- Subscriptions -->
+  <section class="subscriptions" id="subscriptions">
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@500;700&display=swap");
+      #subscriptions {
+        background: linear-gradient(135deg, #0f172a, #1e293b);
+        padding: 100px 20px;
+        color: #f9fafb;
+        font-family: "Cairo", sans-serif;
+        text-align: center;
+      }
+      #subscriptions .section-title {
+        font-size: 2.2rem;
+        color: #facc15;
+        font-weight: 900;
+        margin-bottom: 60px;
+      }
+      .subscriptions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+        max-width: 1100px;
+        margin: auto;
+      }
+      .subscription-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(250, 204, 21, 0.1);
+        border-radius: 20px;
+        padding: 30px 20px;
+        box-shadow: 0 0 25px rgba(0, 0, 0, 0.25);
+        transition: all 0.35s ease;
+        backdrop-filter: blur(8px);
+        position: relative;
+        overflow: hidden;
+      }
+      .subscription-card:hover {
+        transform: translateY(-10px);
+        border-color: #facc15;
+        box-shadow: 0 0 35px rgba(250, 204, 21, 0.3);
+      }
+      .subscription-card img.sub-logo {
+        width: 100px;
+        height: auto;
+        margin-bottom: 18px;
+      }
+      .subscription-card h3 { font-size: 1.4rem; color: #facc15; margin-bottom: 10px; }
+      .subscription-card .price { font-size: 1.15rem; font-weight: 900; color:#fff; margin: 10px 0; }
+      .subscription-card .duration { font-size: 1rem; color:#e5e7eb; margin-bottom: 10px; }
+      .subscription-card p { font-size:.95rem; color:#cbd5e1; line-height: 1.6; margin-bottom: 18px; }
+      .subscription-card .btn {
+        background:#facc15; color:#111827;
+        padding:12px 24px; border-radius: 10px;
+        font-weight:900;
+      }
+      .subscription-card .btn:hover { background:#fde047; transform: scale(1.06); }
+    </style>
+
+    <div class="container">
+      <h2 class="section-title">الاشتراكات المتاحة</h2>
+
+      <div class="subscriptions-grid">
+        <!-- Netflix -->
+        <div class="subscription-card fade-in">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/7/75/Netflix_icon.svg" alt="Netflix Logo" class="sub-logo" />
+          <h3>Netflix</h3>
+          <div class="price">اختار الباقة</div>
+          <div class="duration">شهري</div>
+          <p>اختار الباقة المناسبة لك مع تفاصيل كاملة.</p>
+          <button class="btn" onclick="openPlansModal('netflix')">اشترك الآن</button>
+        </div>
+
+        <!-- Watch IT -->
+        <div class="subscription-card fade-in">
+          <img
+            src="data:image/jpeg;base64,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"
+            alt="WATCH IT Logo" class="sub-logo"
+          />
+          <h3>Watch IT</h3>
+          <div class="price">اختار الباقة</div>
+          <div class="duration">شهري / سنوي</div>
+          <p>اختار المدة والباقة وشوف التفاصيل قبل الطلب.</p>
+          <button class="btn" onclick="openPlansModal('watchit')">اشترك الآن</button>
+        </div>
+
+        <!-- Shahid -->
+        <div class="subscription-card fade-in">
+          <img src="https://play-lh.googleusercontent.com/9q9uNUq1Xxr9D7jLPXMWWgnPUzYPzRLHaTXqjgRnB48eZax_zrucdCAJNlPEKhvqd6U=w240-h480-rw" alt="Shahid Logo" class="sub-logo" />
+          <h3>Shahid</h3>
+          <div class="price">اختار الباقة</div>
+          <div class="duration">شهري / سنوي</div>
+          <p>باقات متعددة + تفاصيل لكل باقة قبل ما تبعت الطلب.</p>
+          <button class="btn" onclick="openPlansModal('shahid')">اشترك الآن</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="hero" id="about">
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap");
+      #about {
+        background: linear-gradient(135deg, #1f2937, #0f172a);
+        padding: 80px 20px; color:#f9fafb;
+        text-align:center; font-family:"Cairo", sans-serif;
+      }
+      #about .container {
+        max-width:850px; margin:auto;
+        background: rgba(255,255,255,.05);
+        padding:50px 40px; border-radius:25px;
+        backdrop-filter: blur(8px);
+        box-shadow:0 10px 40px rgba(0,0,0,.3);
+      }
+      #about h1 { font-size:2.2rem; font-weight:900; color:#fff; margin-bottom:25px; }
+      #about p { font-size:1.05rem; margin-bottom:18px; color:#e5e7eb; line-height:1.9; }
+      #about strong { color:#ffb703; }
+      .time-note { margin-top: 10px; }
+    </style>
+    <div class="container">
+      <h1>من نحن؟</h1>
+
+      <p>
+        أنا صاحب موقع <strong>اشتراكاتي</strong>، وأسعى لتقديم خدمات اشتراكات رقمية أصلية وموثوقة
+        لأشهر المنصات الترفيهية مثل
+        <strong>Netflix</strong>، <strong>Shahid</strong>، <strong>Watch It</strong>
+        بأسعار تنافسية تناسب الجميع.
+      </p>
+
+      <p>
+        بدأت فكرة الموقع من إيماني بأن الترفيه يجب أن يكون في متناول الجميع،
+        لذلك أنشأت هذه المنصة لتسهيل الحصول على الاشتراكات الأصلية بطريقة
+        <strong>بسيطة وآمنة</strong>.
+      </p>
+
+      <p>
+        هدفي هو بناء ثقة حقيقية بيني وبين العملاء من خلال
+        <strong>الشفافية، السرعة، والدعم المستمر</strong>.
+      </p>
+
+      <p class="time-note">
+        ⏱️ يتم تفعيل الاشتراك خلال فترة تتراوح بين <strong>5 دقائق و15 دقيقة كحد أقصى</strong> بعد تأكيد التحويل.
+      </p>
+    </div>
+  </section>
+
+  <!-- Privacy Policy -->
+  <section class="hero" id="Privacy_Policy">
+    <style>
+      #Privacy_Policy {
+        background: linear-gradient(135deg, #312e81, #1e1b4b);
+        padding: 80px 20px;
+        color: #f9fafb;
+        text-align: center;
+        font-family: "Cairo", sans-serif;
+        overflow: hidden;
+      }
+      #Privacy_Policy .container {
+        max-width: 900px;
+        margin: auto;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 50px 35px;
+        border-radius: 25px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      }
+      #Privacy_Policy h1 { font-size: 2rem; color: #facc15; margin-bottom: 20px; }
+      #Privacy_Policy p { font-size: 1.05rem; color: #e0e7ff; line-height: 1.9; text-align: justify; }
+    </style>
+
+    <div class="container">
+      <h1>سياسة الخصوصية</h1>
+      <p>
+        نحن نحترم خصوصية زوارنا والمستخدمين. يتم جمع البيانات فقط لتنفيذ طلب
+        الاشتراك والتواصل معك بشأنه، مثل الاسم والبريد الإلكتروني ورقم الهاتف.
+        <br /><br />
+        لا نشارك بياناتك مع أي جهة خارجية تحت أي ظرف.
+        <br /><br />
+        باستخدامك للموقع، فإنك توافق على جمع واستخدام بياناتك وفقًا لهذه
+        السياسة. يمكنك التواصل معنا في أي وقت لحذف أو تعديل بياناتك عبر صفحة
+        <strong>اتصل بنا</strong>.
+      </p>
+    </div>
+  </section>
+
+  <!-- Terms -->
+  <section class="hero" id="Terms&Conditions">
+    <style>
+      #Terms\&Conditions {
+        background: linear-gradient(135deg, #4c0519, #1a0b0d);
+        padding: 80px 20px;
+        color: #f9fafb;
+        text-align: center;
+        font-family: "Cairo", sans-serif;
+        overflow: hidden;
+      }
+      #Terms\&Conditions .container {
+        max-width: 900px;
+        margin: auto;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 50px 35px;
+        border-radius: 25px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      }
+      #Terms\&Conditions h1 { font-size: 2rem; color: #f87171; margin-bottom: 20px; }
+      #Terms\&Conditions p { font-size: 1.05rem; color: #fee2e2; line-height: 1.9; text-align: justify; }
+    </style>
+
+    <div class="container">
+      <h1>الشروط والأحكام</h1>
+      <p>
+        باستخدام هذا الموقع، فإنك توافق على الالتزام بجميع الشروط التالية:
+        <br /><br />
+        • يتم تنفيذ الطلبات بعد تأكيد الدفع والتحقق من التحويل. <br />
+        • الموقع غير مسؤول عن أي توقف أو مشكلة في الخدمة من جهة المنصات الأصلية
+        (مثل نتفليكس أو شاهد). <br />
+        • لا يجوز إساءة استخدام الموقع أو محاولة اختراقه. <br /><br />
+        يحتفظ الموقع بالحق في تعديل هذه الشروط في أي وقت.
+      </p>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section class="hero" id="contact">
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap");
+      #contact {
+        background: linear-gradient(135deg, #0d9488, #064e3b);
+        padding: 80px 20px;
+        color: #f9fafb;
+        text-align: center;
+        font-family: "Cairo", sans-serif;
+        position: relative;
+        overflow: hidden;
+      }
+      #contact .container {
+        max-width: 800px;
+        margin: auto;
+        background: rgba(255, 255, 255, 0.08);
+        padding: 45px 35px;
+        border-radius: 25px;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 8px 35px rgba(0, 0, 0, 0.4);
+      }
+      #contact h1 { font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 20px; }
+      #contact p { font-size: 1.1rem; line-height: 1.9; color: #f0fdf4; }
+      #contact a { color: #facc15; font-weight: 600; text-decoration: none; transition: 0.3s; }
+      #contact a:hover { color: #fff176; }
+    </style>
+
+    <div class="container">
+      <h1>اتصل بنا</h1>
+      <p>يسعدنا تواصلك معنا في أي وقت للاستفسارات أو الدعم الفني.</p>
+      <p>
+        واتساب:
+        <a href="https://wa.me/201274445091" target="_blank" rel="noopener">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+            alt="WhatsApp"
+            width="22"
+            style="vertical-align: middle; margin-left: 5px"
+          />
+          John Latif
+        </a>
+        <br /><br />
+        🕒 ساعات العمل: يوميًا من <strong>10 صباحًا إلى 10 مساءً</strong> بتوقيت القاهرة
+      </p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="footer">
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap");
+      #footer {
+        background: linear-gradient(135deg, #111827, #0f172a);
+        color: #f9fafb;
+        text-align: center;
+        padding: 50px 20px 30px;
+        font-family: "Cairo", sans-serif;
+        position: relative;
+        overflow: hidden;
+      }
+      #footer .footer-links { margin-bottom: 20px; }
+      #footer .footer-links a {
+        color: #facc15; margin: 0 10px; text-decoration: none;
+        font-weight: 600; transition: 0.3s;
+      }
+      #footer .footer-links a:hover { color: #fff; text-decoration: underline; }
+      #footer .social-icons a { display: inline-block; margin: 0 6px; opacity: 0.85; transition: 0.3s; }
+      #footer .social-icons a:hover { opacity: 1; transform: scale(1.1); }
+      #footer .social-icons img { width: 26px; height: 26px; vertical-align: middle; border-radius: 50%; }
+      #footer p { margin-top: 20px; font-size: 0.95rem; color: #d1d5db; }
+    </style>
+
+    <div class="container">
+      <div class="footer-links">
+        <a href="#about">من نحن</a> |
+        <a href="#Privacy_Policy">سياسة الخصوصية</a> |
+        <a href="#Terms&Conditions">الشروط والأحكام</a> |
+        <a href="#contact">اتصل بنا</a>
+      </div>
+
+      <div class="social-icons">
+        <a href="https://wa.me/201274445091" target="_blank" rel="noopener">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp"/>
+        </a>
+        <a href="#" target="_blank" rel="noopener">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram"/>
+        </a>
+      </div>
+
+      <p>جميع الحقوق محفوظة &copy; 2025 موقع اشتراكاتي</p>
+    </div>
+  </footer>
+
+  <!-- ✅ Modal اختيار الباقات -->
+  <div id="plansModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="closePlansModal">&times;</span>
+      <h2 style="margin-bottom:10px;">اختيار الباقة</h2>
+      <p id="plansSubtitle" style="color:#666; margin-bottom:14px;">اختر المدة ثم اختر الباقة.</p>
+
+      <div class="form-group">
+        <label>المدة</label>
+        <div style="display:flex; gap:10px;">
+          <button type="button" class="btn" style="flex:1;" id="btnMonthly">شهري</button>
+          <button type="button" class="btn" style="flex:1;" id="btnYearly">سنوي</button>
+        </div>
+      </div>
+
+      <div id="plansContainer" style="display:grid; gap:12px;"></div>
+
+      <div style="margin-top:16px;">
+        <button type="button" class="btn" style="width:100%; background:#333;" onclick="closePlansModalNow()">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ Modal طلب الاشتراك -->
+  <div id="orderModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="closeModal">&times;</span>
+      <h2>طلب اشتراك</h2>
+      <br>
+      <h3 style="text-align:center; color:#333;">رقم التحويل: <span style="color:#764ba2;">01274445091</span></h3>
+
+      <div id="selectedPlanPreview" style="margin:12px 0 16px; padding:10px; border:1px solid #eee; border-radius:10px; background:#fafafa; display:none;">
+        <div style="font-weight:900; margin-bottom:4px;" id="previewName"></div>
+        <div style="color:#555;" id="previewMeta"></div>
+      </div>
+
+      <form id="orderForm" enctype="multipart/form-data">
+        <input type="hidden" id="subscriptionId" name="subscriptionId">
+
+        <!-- ✅ المهم للسيرفر -->
+        <input type="hidden" id="planKey" name="planKey">
+
+        <!-- اختياري للعرض -->
+        <input type="hidden" id="planName" name="planName">
+        <input type="hidden" id="planDuration" name="planDuration">
+        <input type="hidden" id="planPrice" name="planPrice">
+
+        <div class="form-group">
+          <label for="accountName">اسم الحساب</label>
+          <input type="text" id="accountName" name="accountName" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">البريد الإلكتروني للحساب</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">رقم التليفون المسجل في الحساب</label>
+          <input type="tel" id="phone" name="phone" required>
+        </div>
+
+        <div class="form-group">
+          <label for="transferNumber">رقم التحويل</label>
+          <input type="text" id="transferNumber" name="transferNumber" required>
+        </div>
+
+        <div class="form-group">
+          <label for="transferScreenshot">سكرين للتحويل</label>
+          <div class="file-input-container">
+            <input type="file" id="transferScreenshot" name="transferScreenshot" accept="image/*" class="file-input" required>
+            <div class="file-name" id="fileName"></div>
+          </div>
+          <small style="display:block; margin-top:5px; color:#666;">الحد الأقصى 5MB</small>
+        </div>
+
+        <button type="submit" class="btn" style="width:100%;">تأكيد الطلب</button>
+      </form>
+
+      <div id="orderMessage" class="message"></div>
+    </div>
+  </div>
+
+  <script>
+    // ====== عناصر ======
+    const orderModal = document.getElementById('orderModal');
+    const closeModal = document.getElementById('closeModal');
+    const orderForm = document.getElementById('orderForm');
+    const orderMessage = document.getElementById('orderMessage');
+    const fileInput = document.getElementById('transferScreenshot');
+    const fileName = document.getElementById('fileName');
+
+    const plansModal = document.getElementById('plansModal');
+    const closePlansModal = document.getElementById('closePlansModal');
+    const plansContainer = document.getElementById('plansContainer');
+    const plansSubtitle = document.getElementById('plansSubtitle');
+    const btnMonthly = document.getElementById('btnMonthly');
+    const btnYearly = document.getElementById('btnYearly');
+
+    const selectedPlanPreview = document.getElementById('selectedPlanPreview');
+    const previewName = document.getElementById('previewName');
+    const previewMeta = document.getElementById('previewMeta');
+
+    // ====== ظهور تدريجي ======
+    const fadeElements = document.querySelectorAll('.fade-in');
+    const fadeInOnScroll = function() {
+      fadeElements.forEach(el => {
+        const top = el.getBoundingClientRect().top;
+        if (top < window.innerHeight - 150) el.classList.add('visible');
+      });
+    };
+    window.addEventListener('scroll', fadeInOnScroll);
+    fadeInOnScroll();
+
+    // ====== اسم الملف ======
+    fileInput.addEventListener('change', function() {
+      if (this.files.length > 0) {
+        fileName.textContent = this.files[0].name;
+        fileInput.classList.add('has-file');
+      } else {
+        fileName.textContent = '';
+        fileInput.classList.remove('has-file');
+      }
+    });
+
+    // ====== مودال الطلب ======
+    function openOrderModal(subscriptionId) {
+      document.getElementById('subscriptionId').value = subscriptionId;
+      orderModal.classList.add('active');
+    }
+    function closeOrderModalNow() {
+      orderModal.classList.remove('active');
+      orderMessage.style.display = 'none';
+      orderForm.reset();
+      fileName.textContent = '';
+      fileInput.classList.remove('has-file');
+      selectedPlanPreview.style.display = 'none';
+    }
+    closeModal.addEventListener('click', closeOrderModalNow);
+
+    // ====== اغلاق عند الضغط برا ======
+    window.addEventListener('click', function(event) {
+      if (event.target === orderModal) closeOrderModalNow();
+      if (event.target === plansModal) closePlansModalNow();
+    });
+
+    // ====== إرسال الطلب ======
+    orderForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+
+      try {
+        const response = await fetch('/api/subscription-order', { method: 'POST', body: formData });
+        const result = await response.json();
+
+        if (result.success) {
+          orderMessage.textContent = result.message;
+          orderMessage.className = 'message success';
+          orderMessage.style.display = 'block';
+
+          orderForm.reset();
+          fileName.textContent = '';
+          fileInput.classList.remove('has-file');
+
+          setTimeout(() => closeOrderModalNow(), 2500);
+        } else {
+          orderMessage.textContent = result.message || 'حدث خطأ';
+          orderMessage.className = 'message error';
+          orderMessage.style.display = 'block';
+        }
+      } catch (error) {
+        console.error('Order error:', error);
+        orderMessage.textContent = 'حدث خطأ أثناء إرسال الطلب';
+        orderMessage.className = 'message error';
+        orderMessage.style.display = 'block';
+      }
+    });
+
+    // =========================================================
+    // ✅ الباقات لكل المنصات (IDs هنا = planKey لازم تطابق السيرفر)
+    // subscriptionId: (1 Netflix) (2 Watch IT) (3 Shahid)
+    // =========================================================
+    const PLANS = {
+      netflix: {
+        label: "Netflix",
+        subscriptionId: 1,
+        durations: {
+          monthly: {
+            label: "شهري",
+            plans: [
+              { id: "nf_m_basic", name: "Basic", price: 130, currency: "EGP", details: ["جودة : 720", "عدد الاجهزة : جهاز واحد"] },
+              { id: "nf_m_standard", name: "Standard", price: 200, currency: "EGP", details: ["جودة : 1080", "عدد الاجهزة : جهازين"] },
+              { id: "nf_m_premium", name: "Premium", price: 265, currency: "EGP", details: ["جودة : 4K HDR", "عدد الاجهزة : 4"] },
+            ]
+          },
+        }
+      },
+
+      watchit: {
+        label: "Watch IT",
+        subscriptionId: 2,
+        durations: {
+          monthly: {
+            label: "شهري",
+            plans: [
+              { id: "wi_m_basic", name: "Basic", price: 40, currency: "EGP", details: ["3 شاشات — بإعلانات"] },
+              { id: "wi_m_plus", name: "Plus", price: 140, currency: "EGP", details: ["3 شاشات — بدون إعلانات"] },
+            ]
+          },
+          yearly: {
+            label: "سنوي",
+            plans: [
+              { id: "wi_y_basic", name: "Basic (Yearly)", price: 150, currency: "EGP", details: ["3 شاشات — بإعلانات"] },
+              { id: "wi_y_plus", name: "Plus (Yearly)", price: 600, currency: "EGP", details: ["3 شاشات — بدون إعلانات"] },
+            ]
+          }
+        }
+      },
+
+      shahid: {
+        label: "Shahid",
+        subscriptionId: 3,
+        durations: {
+          monthly: {
+            label: "شهري",
+            plans: [
+              { id: "sh_m_vip_mobile", name: "VIP Mobile", price: 65, currency: "EGP", details: ["أعمال شاهد الأصلية + محتوى حصري"] },
+              { id: "sh_m_vip", name: "VIP", price: 180, currency: "EGP", details: ["محتوى VIP كامل"] },
+              { id: "sh_m_vip_bigtime", name: "VIP | BigTime", price: 310, currency: "EGP", details:["BigTime + VIP"] },
+              { id: "sh_m_bip_sports", name: "VIP | رياضة", price: 360, currency: "EGP", details: ["رياضة + VIP"] },
+              { id: "sh_m_Comprehensive", name: "الشامل", price: 700, currency: "EGP", details: ["VIP + مواسم + رياضة"] },
+            ]
+          },
+          yearly: {
+            label: "سنوي",
+            plans: [
+              { id: "sh_y_vip_mobile", name: "VIP (Yearly)", price: 420, currency: "EGP", details: ["سنوي"] },
+              { id: "sh_y_vip", name: "VIP + Sports (Yearly)", price: 1750, currency: "EGP", details: ["سنوي"] },
+              { id: "sh_y_vip_bigtime", name: "VIP + Sports (Yearly)", price: 3000, currency: "EGP", details: ["سنوي"] },
+              { id: "sh_y_bip_sports", name: "VIP + Sports (Yearly)", price: 5000, currency: "EGP", details: ["سنوي"] },
+              { id: "sh_y_Comprehensive", name: "VIP + Sports (Yearly)", price: 7400, currency: "EGP", details: ["سنوي"] },
+            ]
+          }
+        }
+      }
+    };
+
+    let currentPlatformKey = null;
+    let currentDurationKey = "monthly";
+
+    function openPlansModal(platformKey) {
+      currentPlatformKey = platformKey;
+
+      const platform = PLANS[platformKey];
+      if (!platform) return;
+
+      plansModal.classList.add('active');
+      plansSubtitle.textContent = `اختيار باقات ${platform.label}: اختر المدة ثم اختر الباقة.`;
+
+      const hasMonthly = !!platform.durations?.monthly?.plans?.length;
+      const hasYearly  = !!platform.durations?.yearly?.plans?.length;
+
+      btnMonthly.style.display = hasMonthly ? "inline-block" : "none";
+      btnYearly.style.display  = hasYearly  ? "inline-block" : "none";
+
+      currentDurationKey = hasMonthly ? "monthly" : "yearly";
+
+      btnMonthly.onclick = () => renderPlans("monthly");
+      btnYearly.onclick  = () => renderPlans("yearly");
+
+      renderPlans(currentDurationKey);
+    }
+
+    function closePlansModalNow() {
+      plansModal.classList.remove('active');
+      plansContainer.innerHTML = "";
+    }
+
+    closePlansModal.addEventListener('click', closePlansModalNow);
+
+    function renderPlans(durationKey) {
+      const platform = PLANS[currentPlatformKey];
+      if (!platform) return;
+
+      const duration = platform.durations[durationKey];
+      if (!duration || !duration.plans || duration.plans.length === 0) {
+        plansContainer.innerHTML = `<div class="message error" style="display:block;">لا توجد باقات متاحة لهذه المدة الآن</div>`;
+        return;
+      }
+
+      currentDurationKey = durationKey;
+      btnMonthly.style.opacity = (durationKey === "monthly") ? "1" : ".75";
+      btnYearly.style.opacity  = (durationKey === "yearly") ? "1" : ".75";
+
+      plansContainer.innerHTML = "";
+
+      duration.plans.forEach(p => {
+        const details = (p.details || []).map(d => `<li style="margin:4px 0;">${d}</li>`).join("");
+
+        const card = document.createElement("div");
+        card.style.cssText = `
+          border:1px solid rgba(118,75,162,0.18);
+          border-radius: 14px;
+          padding: 14px;
+          background: #fff;
+        `;
+
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start;">
+            <div style="flex:1;">
+              <div style="font-weight:900; color:#222; margin-bottom:6px;">${platform.label} - ${p.name}</div>
+              <ul style="margin:0; padding-right:18px; color:#555;">${details}</ul>
+            </div>
+
+            <div style="text-align:left; min-width:120px;">
+              <div style="font-size:1.2rem; font-weight:900; color:#764ba2;">
+                ${p.price} <span style="font-size:.85rem; font-weight:800;">${p.currency || ""}</span>
+              </div>
+              <div style="color:#777; font-size:.9rem;">${duration.label}</div>
+            </div>
+          </div>
+
+          <button class="btn" style="width:100%; margin-top:12px;" onclick="selectPlan('${p.id}')">
+            اختر هذه الباقة
+          </button>
+        `;
+
+        plansContainer.appendChild(card);
+      });
+    }
+
+    function selectPlan(planKey) {
+      const platform = PLANS[currentPlatformKey];
+      if (!platform) return;
+
+      const duration = platform.durations[currentDurationKey];
+      const plan = duration.plans.find(x => x.id === planKey);
+      if (!plan) return;
+
+      // ✅ بيانات الباقة في الفورم
+      document.getElementById('subscriptionId').value = platform.subscriptionId;
+
+      // ✅ ده اللي السيرفر مستنيه باسم planKey
+      document.getElementById('planKey').value = plan.id;
+
+      // اختياري
+      document.getElementById('planName').value = `${platform.label} - ${plan.name}`;
+      document.getElementById('planDuration').value = currentDurationKey;
+      document.getElementById('planPrice').value = plan.price;
+
+      // Preview
+      previewName.textContent = `${platform.label} - ${plan.name}`;
+      previewMeta.textContent = `المدة: ${duration.label} — السعر: ${plan.price} ${plan.currency || ""}`;
+      selectedPlanPreview.style.display = "block";
+
+      closePlansModalNow();
+      openOrderModal(platform.subscriptionId);
+    }
+  </script>
+</body>
+</html>
